@@ -18,7 +18,7 @@ public class Day7 {
             throw new RuntimeException(e);
         }
 
-        System.out.println(part1(chars));
+        System.out.println(part2(chars));
     }
 
     private static int part1(List<char[]> chars) {
@@ -47,5 +47,37 @@ public class Day7 {
             beams = newBeams;
         }
         return ans;
+    }
+
+    private static long part2(List<char[]> chars) {
+        // DP
+        int rows = chars.size();
+        int cols = chars.getFirst().length;
+
+        int startIdx = -1;
+        for (int i = 0; i < cols; i++) {
+            if (chars.getFirst()[i] == 'S') {
+                startIdx = i;
+            }
+        }
+
+        // dp[r][c] is the number of possible timelines for a particle at row r, column c.
+        long[][] dp = new long[rows][cols];
+
+        // last row has no splitters
+        for (int c = 0; c < cols; c++) {
+            dp[rows - 1][c] = 1;
+        }
+
+        for (int r = rows - 2; r >= 0; r--) {
+            for (int c = 0; c < cols; c++) {
+                if (chars.get(r + 1)[c] == '^') {
+                    dp[r][c] = dp[r + 1][c - 1] + dp[r + 1][c + 1];
+                } else {
+                    dp[r][c] = dp[r + 1][c];
+                }
+            }
+        }
+        return dp[0][startIdx];
     }
 }
