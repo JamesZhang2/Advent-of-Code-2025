@@ -16,7 +16,8 @@ public class Day2 {
                 idPairs[i][1] = Long.parseLong(pairs[i].substring(dashIdx + 1));
             }
 
-            System.out.println(part1(idPairs));
+//            System.out.println(part1(idPairs));
+            System.out.println(part2(idPairs));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -54,5 +55,37 @@ public class Day2 {
             long factor = (long)(Math.pow(10, (len + 1) / 2));
             return firstHalf * factor + firstHalf;
         }
+    }
+
+    private static long part2(long[][] idPairs) {
+        // Since the difference between each pair is on the order of 10^5, we can check all numbers in between.
+        long ans = 0;
+        for (long[] pair : idPairs) {
+            for (long i = pair[0]; i <= pair[1]; i++) {
+                if (isInvalidPart2(i)) {
+                    ans += i;
+                }
+            }
+        }
+        return ans;
+    }
+
+    private static boolean isInvalidPart2(long num) {
+        String s = num + "";
+        for (int i = 1; i <= s.length() / 2; i++) {
+            if (s.length() % i != 0) {
+                continue;
+            }
+            long factor = (long)Math.pow(10, i);
+            long repeat = 0;
+            for (int j = 0; j < s.length() / i; j++) {
+                repeat = repeat * factor + num % factor;
+            }
+            if (repeat == num) {
+//                System.out.println(num);
+                return true;
+            }
+        }
+        return false;
     }
 }
