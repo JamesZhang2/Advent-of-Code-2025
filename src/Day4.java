@@ -24,34 +24,58 @@ public class Day4 {
             diagram[i] = lines.get(i).toCharArray();
         }
 
-        System.out.println(part1(diagram));
+//        System.out.println(part1(diagram));
+        System.out.println(part2(diagram));
     }
 
     private static int part1(char[][] diagram) {
         int ans = 0;
         for (int r = 0; r < diagram.length; r++) {
             for (int c = 0; c < diagram[0].length; c++) {
-                if (diagram[r][c] == '.') {
-                    continue;
-                }
-                int neigh = 0;
-                for (int deltaR = -1; deltaR <= 1; deltaR++) {
-                    for (int deltaC = -1; deltaC <= 1; deltaC++) {
-                        if (r + deltaR < 0 || r + deltaR >= diagram.length
-                                || c + deltaC < 0 || c + deltaC >= diagram[0].length) {
-                            continue;
-                        }
-                        if (deltaR == 0 && deltaC == 0) {
-                            continue;
-                        }
-                        neigh += diagram[r + deltaR][c + deltaC] == '@' ? 1 : 0;
-                    }
-                }
-                if (neigh < 4) {
-                    ans++;
-                }
+                ans += accessible(diagram, r, c) ? 1 : 0;
             }
         }
         return ans;
+    }
+
+    private static int part2(char[][] diagram) {
+        // Simulation
+        List<int[]> removable = new ArrayList<>();
+        int ans = 0;
+        do {
+            removable.clear();
+            for (int r = 0; r < diagram.length; r++) {
+                for (int c = 0; c < diagram[0].length; c++) {
+                    if (accessible(diagram, r, c)) {
+                        removable.add(new int[]{r, c});
+                    }
+                }
+            }
+            ans += removable.size();
+            for (int[] pair : removable) {
+                diagram[pair[0]][pair[1]] = '.';
+            }
+        } while (!removable.isEmpty());
+        return ans;
+    }
+
+    private static boolean accessible(char[][] diagram, int r, int c) {
+        if (diagram[r][c] == '.') {
+            return false;
+        }
+        int neigh = 0;
+        for (int deltaR = -1; deltaR <= 1; deltaR++) {
+            for (int deltaC = -1; deltaC <= 1; deltaC++) {
+                if (r + deltaR < 0 || r + deltaR >= diagram.length
+                        || c + deltaC < 0 || c + deltaC >= diagram[0].length) {
+                    continue;
+                }
+                if (deltaR == 0 && deltaC == 0) {
+                    continue;
+                }
+                neigh += diagram[r + deltaR][c + deltaC] == '@' ? 1 : 0;
+            }
+        }
+        return neigh < 4;
     }
 }
