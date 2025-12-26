@@ -22,8 +22,9 @@ public class Day9 {
         }
 
 //        System.out.println(part1(points));
-        System.out.println("Clockwise? " + clockwise(points));  // My input is counterclockwise
-        System.out.println("Has size-1 steps? " + hasSizeOneSteps(points));  // My input does not have size-1 steps
+//        System.out.println("Clockwise? " + clockwise(points));  // My input is counterclockwise
+//        System.out.println("Has size-1 steps? " + hasSizeOneSteps(points));  // My input does not have size-1 steps
+        System.out.println(part2(points));
     }
 
     private static long part1(List<int[]> points) {
@@ -35,6 +36,62 @@ public class Day9 {
             }
         }
         return ans;
+    }
+
+    private static long part2(List<int[]> points) {
+        long ans = -1;
+        for (int i = 0; i < points.size(); i++) {
+            for (int j = i + 1; j < points.size(); j++) {
+                long area = getRectSize(points.get(i), points.get(j));
+                if (area < ans) {
+                    // don't bother checking
+                    continue;
+                }
+                if (isValid(points, i, j)) {
+                    System.out.println(i + " " + j);
+                    ans = area;
+                }
+            }
+        }
+        return ans;
+    }
+
+    // Requires: input is counterclockwise and does not have size-1 steps
+    // Requires: i < j
+    private static boolean isValid(List<int[]> points, int i, int j) {
+        if (j == i + 1) {
+            return true;
+        }
+
+        char dir = dir(points.get(i), points.get(j));
+        int xi = points.get(i)[0];
+        int xj = points.get(j)[0];
+        int yi = points.get(i)[1];
+        int yj = points.get(j)[1];
+
+        if (xi > xj && yi > yj && dir == 'D') return false;
+
+        if (xi > xj && yi < yj && dir == 'L') return false;
+        if (xi > xj && yi < yj && dir == 'D') return false;
+
+        if (xi < xj && yi > yj && dir == 'D') return false;
+        if (xi < xj && yi > yj && dir == 'R') return false;
+
+        if (xi < xj && yi < yj && dir != 'R') return false;
+
+        int xMin = Math.min(xi, xj);
+        int xMax = Math.max(xi, xj);
+        int yMin = Math.min(yi, yj);
+        int yMax = Math.max(yi, yj);
+
+        // This test is broken: It returns false positives. Sometimes (i, j) is invalid yet it still returns true.
+        for (int k = i; k <= j; k++) {
+            if (xMin < points.get(k)[0] && points.get(k)[0] < xMax
+                && yMin < points.get(k)[1] && points.get(k)[1] < yMax) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static long getRectSize(int[] p1, int[] p2) {
