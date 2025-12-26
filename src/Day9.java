@@ -48,7 +48,7 @@ public class Day9 {
                     continue;
                 }
                 if (isValid(points, i, j)) {
-                    System.out.println(i + " " + j);
+//                    System.out.println(i + " " + j);
                     ans = area;
                 }
             }
@@ -58,6 +58,8 @@ public class Day9 {
 
     // Requires: input is counterclockwise and does not have size-1 steps
     // Requires: i < j
+    // This test still isn't good enough. The answer I got was too low, so there are probably false negatives.
+    // I did manage to pass the simple example in the problem description though.
     private static boolean isValid(List<int[]> points, int i, int j) {
         if (j == i + 1) {
             return true;
@@ -84,18 +86,36 @@ public class Day9 {
         int yMin = Math.min(yi, yj);
         int yMax = Math.max(yi, yj);
 
-        // This test is broken: It returns false positives. Sometimes (i, j) is invalid yet it still returns true.
-        for (int k = i; k <= j; k++) {
-            if (xMin < points.get(k)[0] && points.get(k)[0] < xMax
-                && yMin < points.get(k)[1] && points.get(k)[1] < yMax) {
-                return false;
+        for (int k = 0; k < points.size(); k++) {
+            int[] prevPoint = points.get(k);
+            int[] nextPoint = points.get((k + 1) % points.size());
+            if (prevPoint[0] == nextPoint[0]
+                    && xMin < prevPoint[0] && prevPoint[0] < xMax) {
+                int segmentYMax = Math.max(prevPoint[1], nextPoint[1]);
+                int segmentYMin = Math.min(prevPoint[1], nextPoint[1]);
+                if (hasOverlap(yMin, yMax, segmentYMin, segmentYMax)) {
+                    return false;
+                }
+            }
+            if (prevPoint[1] == nextPoint[1]
+                    && yMin < prevPoint[1] && prevPoint[1] < yMax) {
+                int segmentXMax = Math.max(prevPoint[0], nextPoint[0]);
+                int segmentXMin = Math.min(prevPoint[0], nextPoint[0]);
+                if (hasOverlap(xMin, xMax, segmentXMin, segmentXMax)) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
+    // Returns true if the two intervals have nontrivial overlap (more than at one point), false otherwise
+    private static boolean hasOverlap(int aMin, int aMax, int bMin, int bMax) {
+        return Math.min(aMax, bMax) > Math.max(aMin, bMin);
+    }
+
     private static long getRectSize(int[] p1, int[] p2) {
-        return (long)(Math.abs(p1[0] - p2[0]) + 1) * (Math.abs(p1[1] - p2[1]) + 1);
+        return (long) (Math.abs(p1[0] - p2[0]) + 1) * (Math.abs(p1[1] - p2[1]) + 1);
     }
 
     // Returns true if the points enclose a region clockwise, false if they enclose a region counterclockwise.
@@ -164,7 +184,7 @@ public class Day9 {
     private static boolean hasSizeOneSteps(List<int[]> points) {
         for (int i = 0; i < points.size(); i++) {
             if (Math.abs(points.get(i)[0] - points.get((i + 1) % points.size())[0]) == 1
-                || Math.abs(points.get(i)[1] - points.get((i + 1) % points.size())[1]) == 1) {
+                    || Math.abs(points.get(i)[1] - points.get((i + 1) % points.size())[1]) == 1) {
                 return true;
             }
         }
