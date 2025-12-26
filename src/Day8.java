@@ -23,10 +23,10 @@ public class Day8 {
             throw new RuntimeException(e);
         }
 
-        System.out.println(part1(points));
+        solve(points);
     }
 
-    private static long part1(List<int[]> points) {
+    private static void solve(List<int[]> points) {
         // There are 1000 points in my puzzle input, so roughly 5 * 10^5 unordered pairs
         List<long[]> pairs = new ArrayList<>();  // distance^2, first idx, second idx
         for (int i = 0; i < points.size(); i++) {
@@ -65,14 +65,17 @@ public class Day8 {
             groups.add(l);
         }
 
-        // 1000 is the number of closest junction boxes that we're connecting
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < pairs.size(); i++) {
             int first = (int)(pairs.get(i)[1]);
             int second = (int)(pairs.get(i)[2]);
 
             if (labels[first] == labels[second]) {
                 // already in the same group - do nothing
                 continue;
+            }
+            // Part 2
+            if (groups.get(labels[first]).size() + groups.get(labels[second]).size() == points.size()) {
+                System.out.println("Part 2 answer: " + (long)(points.get(first)[0]) * points.get(second)[0]);
             }
             if (groups.get(labels[first]).size() > groups.get(labels[second]).size()) {
                 // merge second into first
@@ -91,20 +94,24 @@ public class Day8 {
                 }
                 groups.get(labelOfFirst).clear();
             }
-        }
 
-//        for (int label : labels) {
-//            System.out.print(label + ",");
-//        }
-//        System.out.println();
-//        System.out.println(groups);
+            // Part 1
+            // 1000 is the number of closest junction boxes that we're connecting
+            if (i == 1000 - 1) {
+//                for (int label : labels) {
+//                    System.out.print(label + ",");
+//                }
+//                System.out.println();
+//                System.out.println(groups);
 
-        List<Integer> groupSizes = new ArrayList<>();
-        for (int i = 0; i < points.size(); i++) {
-            groupSizes.add(groups.get(i).size());
+                List<Integer> groupSizes = new ArrayList<>();
+                for (int j = 0; j < points.size(); j++) {
+                    groupSizes.add(groups.get(j).size());
+                }
+                groupSizes.sort((a, b) -> b - a);
+//                System.out.println(groupSizes);
+                System.out.println("Part 1 answer: " + (long)groupSizes.get(0) * groupSizes.get(1) * groupSizes.get(2));
+            }
         }
-        groupSizes.sort((a, b) -> b - a);
-//        System.out.println(groupSizes);
-        return (long)groupSizes.get(0) * groupSizes.get(1) * groupSizes.get(2);
     }
 }
