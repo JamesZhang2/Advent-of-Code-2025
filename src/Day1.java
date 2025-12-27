@@ -50,7 +50,7 @@ public class Day1 {
             ans += getPass0(oldDial, dial);
         }
 
-        System.out.println(dial);
+//        System.out.println(dial);
         return ans;
     }
 
@@ -68,7 +68,6 @@ public class Day1 {
         }
     }
 
-    // Currently this method returns an incorrect result
     private static int part2Alt(List<String> lines) {
         int ans = 0;
         int dial = 50;
@@ -87,7 +86,7 @@ public class Day1 {
             dial = (dial + dir * deltaAbs % 100 + 100) % 100;
         }
 
-        System.out.println(dial);
+//        System.out.println(dial);
         return ans;
     }
 }
