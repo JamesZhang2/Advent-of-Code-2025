@@ -19,7 +19,7 @@ public class Day1 {
             throw new RuntimeException(e);
         }
 
-        System.out.println(part1(lines));
+//        System.out.println(part1(lines));
         System.out.println(part2(lines));
         System.out.println(part2Alt(lines));
     }
@@ -50,6 +50,7 @@ public class Day1 {
             ans += getPass0(oldDial, dial);
         }
 
+        System.out.println(dial);
         return ans;
     }
 
@@ -73,6 +74,7 @@ public class Day1 {
         int dial = 50;
 
         for (String line : lines) {
+            assert 0 <= dial && dial <= 99;
             int dir = line.charAt(0) == 'L' ? -1 : 1;
             int deltaAbs = Integer.parseInt(line.substring(1));
             ans += deltaAbs / 100;
@@ -82,9 +84,10 @@ public class Day1 {
             if (dir == 1 && dial != 0 && deltaAbs % 100 + dial >= 100) {
                 ans++;
             }
-            dial = (dial + dir * deltaAbs + 100) % 100;
+            dial = (dial + dir * deltaAbs % 100 + 100) % 100;
         }
 
+        System.out.println(dial);
         return ans;
     }
 }
