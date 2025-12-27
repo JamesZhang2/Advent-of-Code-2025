@@ -24,7 +24,8 @@ public class Day9 {
 //        System.out.println(part1(points));
 //        System.out.println("Clockwise? " + clockwise(points));  // My input is counterclockwise
 //        System.out.println("Has size-1 steps? " + hasSizeOneSteps(points));  // My input does not have size-1 steps
-        System.out.println(part2(points));
+        System.out.println(points.size());
+//        System.out.println(part2(points));
     }
 
     private static long part1(List<int[]> points) {
